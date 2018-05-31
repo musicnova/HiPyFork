@@ -1754,6 +1754,155 @@ def SetJsonParser(loads, dumps):
     JsonDumps = dumps
 
 ########################################
+# Custom parsing
+########################################
+
+import json
+import re
+
+class HiPyFork:
+    @staticmethod
+    def repair2one(dct, rkey, okey, what):
+        DBG = ''
+        if len(DBG): print("\nREPAIR " + str(what))
+        r = what[rkey]
+        del what[rkey]
+        dct[rkey] = r
+        keys = list(what[okey].keys())
+        for k in keys:
+            what[k] = what[okey][k]
+        del what[okey]
+        if len(DBG): print("\nDONE REPAIR" + str(dct) + "\n")
+        return dct
+
+    @staticmethod
+    def parse2one2word(dct, rkey, okey, ekey, key, word, mandatory, fescape):
+        DBG = ''
+        res = {}
+        if len(DBG): print("\nBEGIN " + key + " " + word + " " + str(mandatory))
+        ddl_text = re.sub('^[ \n]*', r'', dct[rkey]).lower()
+        if len(DBG): print("ddl_text = " + ddl_text)
+        if ddl_text.startswith(word.lower()):
+            if len(DBG): print("STARTS")
+            dct[okey][key] = [word if fescape is None else fescape(word)]
+            res = {rkey: ddl_text[len(word):], okey: dct[okey]}
+        else:
+            if len(DBG): print("NOT STARTS")
+            if mandatory:
+                if len(DBG): print("ERROR")
+                res = {rkey: dct[rkey], ekey: dct[okey]}
+            else:
+                res = {rkey: dct[rkey], okey: dct[okey]}
+        if okey not in res.keys(): raise Exception(str(res))
+        if len(DBG): print(str(res))
+        return res
+
+    @staticmethod
+    def parse2one2beforeholder(dct, rkey, okey, ekey, key, goodholders, badholders, mandatory, fescape):
+        DBG = ''
+        res = {}
+        if len(DBG): print("\nBEGIN " + key + " " + str(goodholders) + " " + str(badholders) + " " + str(mandatory))
+        ddl_text = re.sub('^[ \n]*', r'', dct[rkey]).lower()
+        if len(DBG): print("ddl_text = " + ddl_text)
+        min_good = -1
+        for goodholder in goodholders:
+            good = ddl_text.find(goodholder.lower())
+            min_good = good if good < min_good or min_good == -1 else min_good
+        min_bad = -1
+        for badholder in badholders:
+            bad = ddl_text.find(badholder.lower())
+            min_bad = bad if bad < min_bad or min_bad == -1 else min_bad
+        if (min_good != -1 and min_bad == -1) or (min_good < min_bad and min_bad != -1 and min_good != -1):
+            if len(DBG): print("FOUND")
+            what = ddl_text[0:min_good]
+            dct[okey][key] = [what if fescape is None else fescape(what)]
+            res = {rkey: ddl_text[len(what):], okey: dct[okey]}
+        else:
+            if len(DBG): print("NOT FOUND")
+            if mandatory:
+                if len(DBG): print("ERROR")
+                res = {rkey: dct[rkey], ekey: dct[okey]}
+            else:
+                res = {rkey: dct[rkey], okey: dct[okey]}
+        if okey not in res.keys(): raise Exception(str(res))
+        if len(DBG): print(str(res))
+        return res
+
+    @staticmethod
+    def parse2one(ddl_text):
+        # https://www.cloudera.com/documentation/enterprise/5-8-x/topics/impala_create_table.html
+        # https://github.com/quux00/hive-json-schema/blob/master/src/main/java/net/thornydev/JsonHiveSchema.java
+        R = "R1"
+        O = "O1"
+        E = "E1"
+        T = "_1"
+        js = {R: ddl_text, O: {}}
+        try:
+            js = parse2one2word(js, R, O, E, "create_a", "CREATE", True, None)
+            js = parse2one2word(js, R, O, E, "external_b", "EXTERNAL", False, None)
+            js = parse2one2word(js, R, O, E, "table_c", "TABLE", True, None)
+            js = parse2one2word(js, R, O, E, "if_not_exists_d", "IF NOT EXISTS", False, None)
+            js = parse2one2beforeholder(js, R, O, E, "db_name_e", ["."], ["("], False, lambda x: x.replace('`', ''))
+            js = parse2one2word(js, R, O, E, "dot_f", ".", False, None)
+            js = parse2one2beforeholder(js, R, O, E, "table_name_g", ["("], [")"], True, lambda x: x.replace('`', '').replace(' ', ''))
+            js[O]["h"] = {R: js[R], O: {}}
+            js[O]["h"] = parse2one2word(js[O]["h"], R, O, E, "open_ha", "(", True, None)
+            js = repair2one(js, R, O, js[O]["h"])
+            js[O]["h"]["hb"] = [{R: js[R], O: {}}]
+            i_hb = 0
+            while True:
+                js[O]["h"]["hb"][i_hb] = parse2one2beforeholder(js[O]["h"]["hb"][i_hb]
+                    , R, O, E, "col_name_hba", [" "], [")"], True, lambda x: x.replace('`', '').replace(' ', ''))
+                js[O]["h"]["hb"][i_hb] = parse2one2beforeholder(js[O]["h"]["hb"][i_hb]
+                    , R, O, E, "data_type_hbb", [",", ")"], [], True, None)
+                #js = repair2one(js, R, O, js[O]["h"]["hb"][i_hb])
+                #js[O]["h"]["hb"][i_hb] = {R: js[R], O: {}}
+                js[O]["h"]["hb"][i_hb] = parse2one2word(js[O]["h"]["hb"][i_hb]
+                    , R, O, E, "comment_hbc", "COMMENT", False, None)
+                js[O]["h"]["hb"][i_hb] = parse2one2beforeholder(js[O]["h"]["hb"][i_hb]
+                    , R, O, E, "col_comment_hbd", [",", ")"], [], False, None)
+                #js[O]["h"]["hb"][i_hb] = {R: js[R], O: {}}
+                js[O]["h"]["hb"][i_hb] = parse2one2word(js[O]["h"]["hb"][i_hb]
+                    , R, O, E, "comma_hbe", ",", False, None)
+                js = repair2one(js, R, O, js[O]["h"]["hb"][i_hb])
+                if "comma_hbe" in js[O]["h"]["hb"][i_hb].keys():
+                    js[O]["h"]["hb"].append({R: js[R], O: {}})
+                    i_hb = i_hb + 1
+                else:
+                    break
+            #js[O]["h"][R] = js[R]
+            #js[O]["h"] = parse2one2word(js[O]["h"], R, O, E, "close_hc", ")", True, None)
+        except:
+            import traceback
+            return {"error": str(traceback.format_exc()), "js": js}
+        js[T] = js[O]
+        del js[O]
+        return js
+
+    @staticmethod
+    def parse2two(ddl_text):
+        return {}
+
+    @staticmethod
+    def parse2three(ddl_text):
+        return {}
+
+    @staticmethod
+    def parse2json(ddl_text):
+        # https://www.cloudera.com/documentation/enterprise/5-8-x/topics/impala_create_table.html
+        # https://github.com/quux00/hive-json-schema/blob/master/src/main/java/net/thornydev/JsonHiveSchema.java
+        res1 = parse2one(ddl_text)
+        if "_1" in res1.keys(): return res1
+        print("FAIL #1: " + str(res1) + "\n")
+        res2 = parse2two(ddl_text)
+        if "_2" in res2.keys(): return res2
+        print("FAIL #2: " + str(res2) + "\n")
+        res3 = parse2three(ddl_text)
+        if "_3" in res3.keys(): return res3
+        print("FAIL #3: " + str(res3) + "\n")
+        return {}
+
+########################################
 # main() function for command line usage
 ########################################
 
