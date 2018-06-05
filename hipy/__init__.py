@@ -1872,6 +1872,36 @@ class HiPyFork:
                     break
             #js[O]["h"][R] = js[R]
             #js[O]["h"] = parse2one2word(js[O]["h"], R, O, E, "close_hc", ")", True, None)
+            js = parse2one2word(js, R, O, E, "close_hc", ")", True, None) # FIXME
+            js[O]["i"] = {R: js[R], O: {}}
+            js[O]["i"] = parse2one2word(js[O]["i"], R, O, E, "partitioned_by_ia", "PARTITIONED BY", False, None)
+            js[O]["i"] = parse2one2word(js[O]["i"], R, O, E, "open_ib", "(", False, None)
+            js = repair2one(js, R, O, js[O]["i"])
+            js[O]["i"]["ic"] = [{R: js[R], O: {}}]
+            i_ic = 0
+            while True:
+                js[O]["i"]["ic"][i_ic] = parse2one2beforeholder(js[O]["i"]["ic"][i_ic]
+                    , R, O, E, "col_name_ica", [" "], [")"], False, lambda x: x.replace('`', '').replace(' ', ''))
+                js[O]["i"]["ic"][i_ic] = parse2one2beforeholder(js[O]["i"]["ic"][i_ic]
+                    , R, O, E, "data_type_icb", [",", ")"], [], False, None)
+                #js = repair2one(js, R, O, js[O]["i"]["ic"][i_ic])
+                #js[O]["i"]["ic"][i_ic] = {R: js[R], O: {}}
+                js[O]["i"]["ic"][i_ic] = parse2one2word(js[O]["i"]["ic"][i_ic]
+                    , R, O, E, "comment_icc", "COMMENT", False, None)
+                js[O]["i"]["ic"][i_ic] = parse2one2beforeholder(js[O]["i"]["ic"][i_ic]
+                    , R, O, E, "col_comment_icd", [",", ")"], [], False, None)
+                #js[O]["i"]["ic"][i_ic] = {R: js[R], O: {}}
+                js[O]["i"]["ic"][i_ic] = parse2one2word(js[O]["i"]["ic"][i_ic]
+                    , R, O, E, "comma_ice", ",", False, None)
+                js = repair2one(js, R, O, js[O]["i"]["ic"][i_ic])
+                if "comma_ice" in js[O]["i"]["ic"][i_ic].keys():
+                    js[O]["i"]["ic"].append({R: js[R], O: {}})
+                    i_ic = i_ic + 1
+                else:
+                    break
+            #js[O]["h"][R] = js[R]
+            #js[O]["h"] = parse2one2word(js[O]["h"], R, O, E, "close_hc", ")", True, None)
+            js = parse2one2word(js, R, O, E, "close_id", ")", False, None) # FIXME
         except:
             import traceback
             return {"error": str(traceback.format_exc()), "js": js}
