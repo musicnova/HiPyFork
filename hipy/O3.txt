@@ -1,0 +1,75 @@
+# http://www.jsonschema2pojo.org/ O3: [V] JSON   [V] Jackson 1.x   [V] toString
+
+{"hivepojo3": {
+  "create_a":  ["CREATE",""],
+  "external_b":  ["[EXTERNAL]", ""],
+  "table_c":  ["TABLE", ""],
+  "if_not_exists_d":  ["[IF NOT EXISTS]", ""],
+  "db_name_e":  ["[db_name]", ""],
+  "dot_f":  ["[.]", ""],
+  "table_name_g":  ["table_name", ""],
+  "h":  {
+    "partitioned_by_ha": ["[PARTITIONED BY", ""],
+    "open_hb": ["(", ""],
+    "hc": [ {
+      "col_name_hca": ["col_name", ""],
+      "data_type_hcb": ["data_type", ""],
+      "comment_hcc": ["[COMMENT", ""],
+      "col_comment_hcd": ["'col_comment']", ""],
+      "comma_hce": ["[,]", ""]
+    }, {}],
+    "close_hd": [")]", ""]
+  },
+  "i":  {
+    "commment_ia": ["[COMMENT", ""],
+    "table_comment_ib": ["'table_comment'", ""]
+  },
+  "j":  {
+    "with_serdeproperties_ja": ["[WITH SERDEPROPERTIES", ""],
+    "open_jb": ["(", ""],
+    "jc": [ {
+      "key1_jca": ["'key1'", ""],
+      "equals_jcb": ["=", ""],
+      "value1_jcc": ["'value1'", ""]
+    }, {}],
+    "close_jd": [")]", ""]
+  },
+  "k":  {
+    "ka": {
+      "row_format_kaa": ["[ [ROW FORMAT", ""],
+      "row_format_kab": ["row_format]", ""]
+    },
+    "kb": {
+      "stored_as_kba": ["[STORED AS", ""],
+      "file_format_kbb": ["file_format] ]", ""]
+    }
+  },
+  "l":  {
+    "location_la": ["[LOCATION", ""],
+    "hdfs_path_lb": ["'hdfs_path']", ""]
+  },
+  "m":  {
+    "tblproperties_ma": ["[TBLPROPERTIES ", ""],
+    "open_mb": ["(", ""],
+    "mc": [ {
+      "key1_mca": ["'key1'", ""],
+      "equals_mcb": ["=", ""],
+      "value1_mcc": ["'value1'", ""]
+    }, {}],
+    "close_md": [")]", ""]
+  },
+  "n":  {
+    "na": {
+      "cached_in_naa": ["[CACHED IN ", ""],
+      "pool_name_nab": ["'pool_name' ", ""]
+    },
+    "nb": {
+      "with_replication_nba": ["[WITH REPLICATION", ""],
+      "equals_nbb": ["=", ""],
+      "integer_nbc": ["integer]", ""]
+    },
+    "uncached_nc": ["| UNCACHED]", ""]
+  },
+  "as_o":  ["AS", ""],
+  "select_statement_p":  ["select_statement", ""]
+} }
