@@ -1,0 +1,77 @@
+# http://www.jsonschema2pojo.org/ O2: [V] JSON   [V] Jackson 1.x   [V] toString
+
+{"hivepojo2": {
+  "create_a":  ["CREATE",""],
+  "external_b":  ["[EXTERNAL]", ""],
+  "table_c":  ["TABLE", ""],
+  "if_not_exists_d":  ["[IF NOT EXISTS]", ""],
+  "db_name_e":  ["[db_name]", ""],
+  "dot_f":  ["[.]", ""],
+  "table_name_g":  ["table_name", ""],
+  "h":  {
+    "like_parquet_ha": ["LIKE PARQUET", ""],
+    "hdfs_path_of_parquet_file_hb": ["'hdfs_path_of_parquet_file'", ""]
+  },
+  "i":  {
+    "comment_ia": ["[COMMENT", ""],
+    "table_comment_ib": ["'table_comment'", ""]
+  },
+  "j":  {
+    "partitioned_by_ja": ["[PARTITIONED BY", ""],
+    "open_jb": ["(", ""],
+    "jc": [ {
+      "col_name_jca": ["col_name", ""],
+      "data_type_jcb": ["data_type", ""],
+      "comment_jcc": ["[COMMENT", ""],
+      "col_comment_jcd": ["'col_comment']", ""],
+      "comma_jce": ["[,]", ""]
+    }, {}],
+    "close_jd": [")]", ""]
+  },
+  "k":  {
+    "with_serdeproperties_ka": ["[WITH SERDEPROPERTIES", ""],
+    "open_kb": ["(", ""],
+    "kc": [ {
+      "key1_kca": ["'key1'", ""],
+      "equals_kcb": ["=", ""],
+      "value1_kcc": ["'value1'", ""]
+    }, {}],
+    "close_kd": [")]", ""]
+  },
+  "l":  {
+    "la": {
+      "row_format_laa": ["[ [ROW FORMAT", ""],
+      "row_format_lab": ["row_format]", ""]
+    },
+    "lb": {
+      "stored_as_lba": ["[STORED AS", ""],
+      "file_format_lbb": ["file_format] ]", ""]
+    }
+  },
+  "m":  {
+    "location_ma": ["[LOCATION", ""],
+    "hdfs_path_mb": ["'hdfs_path']", ""]
+  },
+  "n":  {
+    "tblproperties_na": ["[TBLPROPERTIES ", ""],
+    "open_nb": ["(", ""],
+    "nc": [ {
+      "key1_nca": ["'key1'", ""],
+      "equals_ncb": ["=", ""],
+      "value1_ncc": ["'value1'", ""]
+    }, {}],
+    "close_nd": [")]", ""]
+  },
+  "o":  {
+    "oa": {
+      "cached_in_oaa": ["[CACHED IN ", ""],
+      "pool_name_oab": ["'pool_name' ", ""]
+    },
+    "ob": {
+      "with_replication_oba": ["[WITH REPLICATION", ""],
+      "equals_obb": ["=", ""],
+      "integer_obc": ["integer]", ""]
+    },
+    "uncached_oc": ["| UNCACHED]", ""]
+  }
+} }
